@@ -10,5 +10,17 @@
     <h1>myFlix Api Instructions</h1>
     <h2>A movie finding machine</h2>
     <p>An API for retrieving information on movies</p>
+
+    The Following are the current API endpoints and their basic function.
+
+    <ul>
+        <li>'/documentation' - Lists documentation for myFlix API, isn't that how you got here?</li>
+        <li>'/genre', '/movies', '/directors' <br> GET will respond with each entry in the given database, presented in JSON. </li>
+        <li>'/movies/(name)', '/genre/(name)' and '/directors/(name)' - GET will respond with a specific entry in the chosen database, also in JSON. </li>
+        <li>'/user' - POST will register a new user. Body must be a JSON with a "name" and "password" specified, also generates an uuid for user</li>
+        <li>'/user/(id) - DELETE will remove that specified user from the database.</li>
+        <li>'/user/change/(current name)/(desired name)' - PUT will change the specified user to the desired username.</li>
+        <li>'/user/favorite/(name)' - POST will add a new favorite movie to that users favorites list' <br> DELETE will do the same but removing it instead.</li>
+    </ul>
 </body>
 </html>
