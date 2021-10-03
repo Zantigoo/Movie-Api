@@ -181,44 +181,27 @@ app.post('/user', (req, res) => {
     }
 });
 
-//deregister (not working?)
+//deregister
 app.delete('/user/:id', (req, res) => {
-    let user = users.find((user) => {
-        return user.id === req.params.id 
-    });
-  
-    if (user) {
-      users = users.filter((obj) => {
-        return obj.id !== req.params.id });
-      res.status(201).send('User ' + req.params.id + ' was deleted.');
-    }
+    res.send('Successful DEL removing user.(This message is a test)')
   });
 
-//update username (not working?)
+//update username
 
 app.put('/user/change/:name1/:name2', (req, res) => {
-    let user = users.find((user) => {
-        return user.name1 === req.params.name1
-    });
-
-    if (user) {
-        user.name2 = req.params.name2;
-        res.status(201).send('Username changed to ' + req.params.name + ".")
-    } else {
-        res.status(404).send('Username could not be changed');
-    }
+    res.send('Successful PUT changing users name.(This message is a test)')
 });
 
 //Add movie to favorites
 
 app.post('/user/favorite/:name', (req, res) => {
-    res.send('Successful POST adding movies to the favorites list.(This message is a lie 🙃)')
+    res.send('Successful POST adding movies to the favorites list.(This message is a test)')
 });
 
 //Remove movie from favorites
 
 app.delete('/user/favorite/:name', (req, res) => {
-    res.send('Successful DELETE removing movies from the favorites list.(This message is a lie 🙃)')
+    res.send('Successful DELETE removing movies from the favorites list.(This message is a test)')
 })
 
 //Error Handling
