@@ -26,9 +26,10 @@ app.use(bodyParser.urlencoded({extended:true}));
 app.use(morgan('common'));
 app.use(express.static('public'));
 
-let auth = require('./auth.js')(app);
+const auth = require('./auth')(app);
 const passport = require('passport');
-require('./passport.js')
+require('./passport');
+
 // Routes
 
 //Documentation
@@ -36,23 +37,24 @@ app.get('/documentation', (req, res) => {
     res.sendFile('public/documentation.html', { root: __dirname });
 });
 
+
+
 //Just Redirects to Docs for now.
 app.get('/', (req, res) => {
     res.sendFile('public/documentation.html', { root: __dirname });
 });
 
 //Get movies list
-app.get('/movies', passport.authenticate('jwt', { session : false }),
- (req, res) => {
+app.get('/movies', passport.authenticate('jwt', { session: false }), (req, res) => {
     Movies.find()
-    .then((movies) => {
+      .then((movies) => {
         res.status(201).json(movies);
-    })
-    .catch((err) => {
-        console.error(err);
-        res.status(500).send('Error: ' + err);
-    });
-});
+      })
+      .catch((error) => {
+        console.error(error);
+        res.status(500).send('Error: ' + error);
+      });
+  });
 
 //Get a movie by name
 app.get('/movies/:Title', (req, res) => {
