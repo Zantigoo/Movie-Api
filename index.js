@@ -26,6 +26,9 @@ app.use(bodyParser.urlencoded({extended:true}));
 app.use(morgan('common'));
 app.use(express.static('public'));
 
+let auth = require('./auth.js')(app);
+const passport = require('passport');
+require('./passport.js')
 // Routes
 
 //Documentation
@@ -39,7 +42,8 @@ app.get('/', (req, res) => {
 });
 
 //Get movies list
-app.get('/movies', (req, res) => {
+app.get('/movies', passport.authenticate('jwt', { session : false }),
+ (req, res) => {
     Movies.find()
     .then((movies) => {
         res.status(201).json(movies);
