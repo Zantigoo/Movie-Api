@@ -1,14 +1,19 @@
 //Module list 
 
 const
+    cors = require('cors');
     bodyParser = require('body-parser'),
     express = require('express'),
     morgan = require('morgan'),
     uuid = require('uuid'),
     mongoose = require('mongoose'),
-    Models = require('./models.js');
-const { update } = require('lodash');
+    Models = require('./models.js'),
+    bcrypt = require('bcryptjs');
+const 
+    { update } = require('lodash'),
+    { check, validationResult } = require('express-validator');
 const app = express();
+
 
 //Model import
 const Movies = Models.Movie;
@@ -16,6 +21,7 @@ const Users = Models.User;
 const Genres = Models.Genre;
 const Directors = Models.Director
 
+//Database connection
 mongoose.connect('mongodb://localhost:27017/FlixrDB',
 {useNewUrlParser: true, useUnifiedTopology: true});
 
@@ -25,10 +31,12 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(morgan('common'));
 app.use(express.static('public'));
+app.use(cors());
 
 const auth = require('./auth')(app);
 const passport = require('passport');
 require('./passport');
+
 
 // Routes
 
@@ -139,7 +147,21 @@ app.get('/users/:Username', passport.authenticate('jwt', { session: false }), (r
         Birthdate: Date
     }*/
 
-app.post('/user', (req, res) => {
+app.post('/users',
+    [ //validator entries
+        check('Username', 'Username is required').isLength({min: 5}), 
+        check('Username', 'Username contains non-alphanumeric characters - not allowed.').isAlphanumeric(),
+        check('Password', 'Password is required').not().isEmpty(),
+        check('Email', 'Email is invalid').isEmail()
+    ], (req, res) => {
+    //check validation
+    let error = validationResult(req);
+    
+    if (!errors.isEmpty()) {
+        return res.status(422).json({ errors: errors.array() });
+    }
+
+    let hashedPassword = Users.hashPassword(req.body.Password);
     Users.findOne({Username: req.body.Username})
     .then((user) => {
         if (user) {
@@ -148,7 +170,7 @@ app.post('/user', (req, res) => {
             Users
             .create({
                 Username: req.body.Username,
-                Password: req.body.Password,
+                Password: hashedPassword,
                 Email: req.body.Email,
                 Birthdate: req.body.Birthdate
             })
@@ -253,7 +275,7 @@ app.use((err, req, res, next) => {
 });
 
 // Listen for requests
-let port =  8080
-app.listen(port, () =>{
-  console.log('Your app is listening on port ' + port +'.');
+const port =  process.env.PORT || 8080;
+app.listen(port, '0.0.0.0', () =>{
+  console.log('Ear to the ground on port' + port +'.');
 });
