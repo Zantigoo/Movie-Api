@@ -22,8 +22,8 @@ const Genres = Models.Genre;
 const Directors = Models.Director
 
 //Database connection
-/*mongoose.connect('mongodb://localhost:27017/FlixrDB',
-{useNewUrlParser: true, useUnifiedTopology: true});*/
+//mongoose.connect('mongodb://localhost:27017/FlixrDB',
+//{useNewUrlParser: true, useUnifiedTopology: true});
 
 mongoose.connect('process.env.CONNECTION_URI',
 {useNewUrlParser: true, useUnifiedTopology: true});
@@ -160,7 +160,7 @@ app.post('/users',
     //check validation
     let error = validationResult(req);
     
-    if (!errors.isEmpty()) {
+    if (!error.isEmpty()) {
         return res.status(422).json({ errors: errors.array() });
     }
 
@@ -280,5 +280,5 @@ app.use((err, req, res, next) => {
 // Listen for requests
 const port =  process.env.PORT || 8080;
 app.listen(port, '0.0.0.0', () =>{
-  console.log('Ear to the ground on port' + port +'.');
+  console.log('Ear to the ground on port ' + port +'.');
 });

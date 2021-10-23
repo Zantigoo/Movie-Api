@@ -27,11 +27,11 @@ let userSchema = mongoose.Schema({
 });
 
 userSchema.statics.hashPassword = (password) => {
-    return bcryptjs.hashSync(password, 10);
+    return bcrypt.hashSync(password, 10);
 };
 
 userSchema.methods.validatePassword = function(password) {
-    return bcryptjs.compareSync(password, this.password);
+    return bcrypt.compareSync(password, this.password);
 };
 
 let genreSchema = mongoose.Schema({
