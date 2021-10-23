@@ -151,7 +151,7 @@ app.get('/users/:Username', passport.authenticate('jwt', { session: false }), (r
 
 app.post('/users',
     [ //validator entries
-        check('Username', 'Username is required').isLength({min: 5}), 
+        check('Username', 'Username is required, must be at least 5 characters').isLength({min: 5}), 
         check('Username', 'Username contains non-alphanumeric characters - not allowed.').isAlphanumeric(),
         check('Password', 'Password is required').not().isEmpty(),
         check('Email', 'Email is invalid').isEmail()
