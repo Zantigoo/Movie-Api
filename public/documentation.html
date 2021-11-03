@@ -23,7 +23,7 @@
         <li>'/movies/(title)', '/genres/(name)' and '/directors/(name)' - GET will respond with a specific entry in the chosen database, also in JSON. </li>
         <li>'/users' - POST will register a new user. Body must be a JSON in provided format.</li>
         <li>'/users/(username) - DELETE will remove that specified user from the database. Can also recieve a PUT with a compatible JSON file to modify profiles.</li>
-        <li>'/user/movies/(objectID)' - POST will add a new favorite movie to that users favorites list' <br> DELETE will remove it instead.</li>
+        <li>'/users/movies/(objectID)' - POST will add a new favorite movie to that users favorites list' <br> DELETE will remove it instead.</li>
     </ul>
 
     <p>User endpoints use a JSON in the proper format. Template provided here.</p>
@@ -32,7 +32,6 @@
         "Username": String, <br>
         "Password": String, <br>
         "Email": String, <br>
-        "Birthdate": Date <br>
         }
 </code></div>
 </body>

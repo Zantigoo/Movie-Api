@@ -146,7 +146,7 @@ app.get('/users/:Username', passport.authenticate('jwt', { session: false }), (r
         Username: String,
         Password: String,
         Email: String,
-        Birthdate: Date
+
     }*/
 
 app.post('/users',
@@ -190,7 +190,7 @@ app.post('/users',
 });
 
 //deregister
-app.delete('/user/:Username',  passport.authenticate('jwt', { session: false }), (req, res) => {
+app.delete('/users/:Username',  passport.authenticate('jwt', { session: false }), (req, res) => {
     Users.findOneAndRemove({ Username: req.params.Username })
     .then((user) => {
         if (!user) {
@@ -215,7 +215,7 @@ app.delete('/user/:Username',  passport.authenticate('jwt', { session: false }),
         Birthdate: Date
     }*/
 
-app.put('/user/:Username', passport.authenticate('jwt', { session: false }), (req, res) => {
+app.put('/users/:Username', passport.authenticate('jwt', { session: false }), (req, res) => {
     Users.findOneAndUpdate({ Username: req.params.Username }, {
         $set:
         {
