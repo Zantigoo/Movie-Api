@@ -56,27 +56,41 @@ app.get('/', (req, res) => {
 
 //Get movies list
 app.get('/movies', passport.authenticate('jwt', { session: false }), (req, res) => {
-    Movies.find()
-      .then((movies) => {
-        res.status(201).json(movies);
-      })
-      .catch((error) => {
-        console.error(error);
-        res.status(500).send('Error: ' + error);
-      });
-  });
-
-//Get a movie by name
-app.get('/movies/:Title', passport.authenticate('jwt', { session: false }), (req, res) => {
-    Movies.findOne( { Title: req.params.Title })
+    Movies.find().populate('Genre Director')
     .then((movies) => {
-        res.status(201).json(movies);
+      res.status(201).json(movies);
     })
-    .catch((err) => {
-        console.error(err);
-        res.status(500).send('Error: ' + err);
+    .catch((error) => {
+      console.error(error);
+      res.status(500).send('Error: ' + error);
     });
 });
+
+//Get a movie by name
+app.get('/movies/title/:title', passport.authenticate('jwt', { session: false }), (req, res) => {
+    Movies.findOne({ 
+        Title: req.params.title
+      }).populate('Genre Director')
+      .then((movie) => {
+        res.json(movie);
+      }).catch((err) => {
+        console.error(err);
+        res.status(500).send('Error: ' + err);
+      });
+    });
+
+//Get a movie by ID
+app.get('/movies/movieid/:MovieID', passport.authenticate('jwt', { session: false }), (req, res) => {
+    Movies.findOne({ 
+        Title: req.params.MovieID
+      }).populate('Genre Director')
+      .then((movie) => {
+        res.json(movie);
+      }).catch((err) => {
+        console.error(err);
+        res.status(500).send('Error: ' + err);
+      });
+    });
 
 // Get Genre list 
 app.get('/genres', passport.authenticate('jwt', { session: false }) ,(req, res) => {
@@ -126,17 +140,35 @@ app.get('/directors/:Name',  passport.authenticate('jwt', { session: false }), (
     });
 });
 
-//Get User by username
-app.get('/users/:Username', passport.authenticate('jwt', { session: false }), (req, res) => {
-    Users.findOne({ Username: req.params.Username })
+//Get Users
+
+app.get('/users', passport.authenticate('jwt', { session: false }), (req, res) => {
+    Users.find().populate('Favmovies')
+    .then(users => res.json(users));
+    });
+
+
+app.get('/users/id/:id', passport.authenticate('jwt', { session: false }), (req, res) => {
+    Users.findOne({ 
+    _id: req.params.id}).populate('Favmovies')
     .then((user) => {
+      console.log(user)
+    res.json(user);
+  }).catch((err) => {
+    console.error(err);
+    res.status(500).send('Error: ' + err);
+  });
+});
+app.get('/users/username/:username', passport.authenticate('jwt', { session: false }), (req, res) => {
+    Users.findOne({ 
+        Username: req.params.username}).populate('Fav')
+        .then((user) => {
         res.json(user);
-    })
-    .catch((err) => {
+      }).catch((err) => {
         console.error(err);
         res.status(500).send('Error: ' + err);
+      });
     });
-});
 
 
 //register username & password
@@ -215,12 +247,28 @@ app.delete('/users/:Username',  passport.authenticate('jwt', { session: false })
         Birthdate: Date
     }*/
 
-app.put('/users/:Username', passport.authenticate('jwt', { session: false }), (req, res) => {
+app.put('/users/:Username',
+[ //validator entries
+    check('Username', 'Username is required, must be at least 5 characters').isLength({min: 5}), 
+    check('Username', 'Username contains non-alphanumeric characters - not allowed.').isAlphanumeric(),
+    check('Password', 'Password is required').not().isEmpty(),
+    check('Email', 'Email is invalid').isEmail()
+],
+ passport.authenticate('jwt', { session: false }),
+    (req, res) => {
+        let errors = validationResult(req);
+
+        if (!errors.isEmpty()) {
+            return res.status(422).json({ errors: errors.array() });
+        }
+
+        let hashedPassword = Users.hashPassword(req.body.Password);
+        
     Users.findOneAndUpdate({ Username: req.params.Username }, {
         $set:
         {
             Username: req.body.Username,
-            Password: req.body.Password,
+            Password: hashedPassword,
             Email: req.body.Email,
             Birthday: req.body.Birthday
         }
@@ -252,6 +300,7 @@ app.post('/users/:Username/movies/:MovieID',  passport.authenticate('jwt', { ses
         }
     });
 });
+
 
 //Remove movie from favorites
 
